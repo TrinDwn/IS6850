@@ -1,0 +1,15 @@
+SELECT * FROM employees
+SELECT * FROM employees WHERE department = ‘Sports’
+
+#•	Return first_name and email of females that work in the tools department having a salary greater than 110,000
+SELECT first_name, email 
+		FROM employees 
+		WHERE  gender = ‘F’ 
+		AND department = ‘Tools’ 
+		AND salary > 110000
+
+# 	Return the first_name and hire_date of those employees who earn more than 165,000 as well as those employees that work in the sports department and also happen to be men
+SELECT first_name, hire_date
+	FROM employees
+	WHERE salary > 165000
+	OR (department = ‘Sports’ and gender = ‘M’)
