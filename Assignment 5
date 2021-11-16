@@ -1,0 +1,61 @@
+/*	Returns employees that work in the electronics division (not department). */
+
+	SELECT * FROM employees	
+	WHERE department
+		 IN (SELECT division FROM departments WHERE division = ‘Electronics’)
+
+
+
+/*Employees that work in Asian or Canada that make over 130000 */
+
+		SELECT * FROM employees
+		WHERE  salary > 130000 
+		AND region_id 
+			IN (SELECT region_id FROM regions WHERE country = ‘Asia’ OR country = ‘Canada’) 
+
+/* First name and department and how much less than highest paid employee in company from asia and Canada. */
+
+		SELECT first_name, department, 
+		 (SELECT MAX(salary) FROM employees) - salary
+		FROM employees
+		WHERE region_id 
+			IN (SELECT region_id FROM regions WHERE country = ‘Asia’ OR country = 					‘Canada’) 
+
+/* Write a query that returns all of those employees that work in the kids division AND the dates at which those employees were hired is 
+greater than all of the hire_dates of employees who work in the maintenance department. */
+
+	SELECT * FROM employees 
+	WHERE 	department = ANY (SELECT department 
+				      FROM departments 
+		                            	 WHERE division = ‘Kids’)	
+	AND hire_date > ALL (SELECT hire_date 
+			FROM employees 
+			WHERE department = ‘Maintenance’)
+      
+ /* Salaries that appear the most frequently */
+  
+	SELECT salary (  SELECT salary, count(*)
+			FROM employees
+			GROUP BY salary
+			ORDER BY count(*) desc, salary desc
+			LIMIT 1) a
+      
+/*	Returns only unique name and id from a duplicate table. */
+
+	SELECT min(id), name FROM dupes
+	GROUP BY name
+
+
+/*	Using subqueries only, write a SQL statement that returns the names of those students that are taking the courses Physics and US History. * /
+		
+		SELECT student_name
+		 FROM students
+		WHERE  student_no IN (SELECT student_no FROM student_enrollment WHERE course_no IN (SELECT course_no FROM  courses WHERE 	course_title IN ( ‘Physics’,‘US History’)))
+
+/*	Using subqueries only, write a query that returns the name of the student that is taking the highest number of courses. */
+
+		SELECT student_name FROM students
+		 WHERE student_no IN
+     ( SELECT student_no FROM
+     (SELECT student_no, COUNT(course_no) course_cnt FROM STUDENT_ENROLLMENT GROUP BY student_no ORDER BY course_cnt desc        
+		 LIMIT 1)a )
