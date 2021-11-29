@@ -1,0 +1,31 @@
+1.	Write a query to return names of departments that have more than 38 peoples working for it.
+
+		SELECT department
+		FROM department d
+		WHERE 38 <  (SELECT count(*) FROM employees e2  WHERE d.department = 	e2.department)
+
+	Now add an extra column returning highest paid employee salary number for each department.
+
+	SELECT department, ( SELECT MAX(salary) FROM employees WHERE department = d.department)
+	FROM department d
+	WHERE 38 <  (SELECT count(*) FROM employees e2  WHERE d.department = 	 e2.department)
+
+2.	
+SELECT department, first_name, salary ,
+CASE
+	WHEN salary = max_by_dapartment THEN ‘HIGHEST SALARY’
+	WHEN salary = min_by_department  THEN ‘LOWEST SALARY’
+END AS salary_in_department 
+FROM (
+	SELECT department, first_name, salary, 
+		(SELECT MAX(salary)
+			FROM employees e2
+			WHERE e1.department = e2.department) as max_by_department
+		(SELECT MIN(salary)
+			FROM employees e2
+			WHERE e1.department = e2.department) as min_by_department
+FROM employees e1
+	) a
+WHERE salary = max_by_department
+	OR salary = min_by_department
+ ORDER BY department
