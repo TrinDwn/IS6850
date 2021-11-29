@@ -1,0 +1,55 @@
+1.	Return the first name, department, hire date and country of the first and last employee hired
+
+		(SELECT first_name, department, hire_date, country
+		FROM employees e INNER JOIN regions r
+		ON e.region_id = r.region_id
+		WHERE hire_date = (SELECT MIN(hire_date) FROM employees e2)
+		LIMIT 1)
+		UNION ALL 
+		SELECT first_name, department, hire_date, country
+		FROM employees e INNER JOIN regions r
+		ON e.region_id = r.region_id
+		WHERE hire_date = (SELECT MAX(hire_date) FROM employees e2)
+
+2.	Write a query that shows the student's name, the courses the student is taking and the professors that teach that course.
+
+		SELECT student_name, se.course_no, p.last_name
+		FROM students s
+		INNER JOIN student_enrollment se
+  		  ON s.student_no = se.student_no
+		INNER JOIN teach t
+   		 ON se.course_no = t.course_no
+		INNER JOIN professors p
+  		  ON t.last_name = p.last_name
+		ORDER BY student_name;
+
+3.	Let's say we only care to see a single professor teaching a course and we don't care for all the other professors that teach the particular course. Write a query that will accomplish this so that every record is distinct.
+	
+  SELECT student_name, course_no, min(last_name)
+	FROM (
+	SELECT student_name, se.course_no, p.last_name
+	FROM students s
+	INNER JOIN student_enrollment se
+	    ON s.student_no = se.student_no
+	INNER JOIN teach t
+	    ON se.course_no = t.course_no
+	INNER JOIN professors p
+	    ON t.last_name = p.last_name
+	    ) a
+	    GROUP BY student_name, course_no
+	    ORDER BY student_name, course_no;
+
+4.	Write a query that returns employees whose salary is above average for their given department.
+	
+  SELECT first_name
+  	FROM employees outer_emp
+  	WHERE salary > (
+  	SELECT AVG(salary)
+    	FROM employees
+    	WHERE department = outer_emp.department);
+
+5.	Write a query that returns ALL of the students as well as any courses they may or may not be taking.
+		
+    SELECT s.student_no, student_name, course_no
+		FROM students s LEFT JOIN student_enrollment se
+		 ON s.student_no = se.student_no
